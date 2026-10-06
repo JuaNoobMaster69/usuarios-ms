@@ -1,13 +1,13 @@
-package pelicula_hexagonal;
+package com.pragma.usuarios;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PeliculaHexagonalApplication {
+public class UsuariosApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PeliculaHexagonalApplication.class, args);
+		SpringApplication.run(UsuariosApplication.class, args);
 	}
 
 }
