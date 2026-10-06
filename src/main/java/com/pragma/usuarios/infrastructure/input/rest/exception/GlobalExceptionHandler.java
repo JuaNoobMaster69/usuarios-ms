@@ -5,6 +5,7 @@
 package com.pragma.usuarios.infrastructure.input.rest.exception;
 
 import com.pragma.usuarios.domain.exception.DomainException;
+import com.pragma.usuarios.domain.exception.UsuarioNoEncontradoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,6 +35,11 @@ public class GlobalExceptionHandler {
                 .findFirst()
                 .orElse("Datos inválidos");
         return construir(HttpStatus.BAD_REQUEST, mensaje);
+    }
+
+    @ExceptionHandler(UsuarioNoEncontradoException.class)
+    public ResponseEntity<Map<String, Object>> manejarNoEncontrado(UsuarioNoEncontradoException ex) {
+        return construir(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     private ResponseEntity<Map<String, Object>> construir(HttpStatus estado, String mensaje) {

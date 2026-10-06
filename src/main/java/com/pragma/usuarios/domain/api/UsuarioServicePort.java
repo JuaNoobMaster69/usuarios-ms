@@ -4,6 +4,7 @@
  */
 package com.pragma.usuarios.domain.api;
 
+import com.pragma.usuarios.domain.model.Rol;
 import com.pragma.usuarios.domain.model.Usuario;
 
 /**
@@ -13,4 +14,6 @@ import com.pragma.usuarios.domain.model.Usuario;
 public interface UsuarioServicePort {
 
     Usuario crearPropietario(Usuario usuario);
+    
+        Rol obtenerRol(Long id);
 }

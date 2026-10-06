@@ -8,6 +8,7 @@ import com.pragma.usuarios.domain.spi.UsuarioPersistencePort;
 import com.pragma.usuarios.infrastructure.output.jpa.entity.UsuarioEntity;
 import com.pragma.usuarios.infrastructure.output.jpa.mapper.UsuarioEntityMapper;
 import com.pragma.usuarios.infrastructure.output.jpa.repository.UsuarioRepository;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,5 +40,9 @@ public class UsuarioJpaAdapter implements UsuarioPersistencePort {
     @Override
     public boolean existePorDocumento(String documento) {
         return repository.existsByDocumento(documento);
+    }
+    @Override
+    public Optional<Usuario> buscarPorId(Long id) {
+        return repository.findById(id).map(mapper::toDomain);
     }
 }

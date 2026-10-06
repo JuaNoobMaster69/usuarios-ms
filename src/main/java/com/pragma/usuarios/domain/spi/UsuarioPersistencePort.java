@@ -4,6 +4,8 @@
  */
 package com.pragma.usuarios.domain.spi;
 
+
+import java.util.Optional;
 import com.pragma.usuarios.domain.model.Usuario;
 
 /**
@@ -17,4 +19,6 @@ public interface UsuarioPersistencePort {
     boolean existePorCorreo(String correo);
 
     boolean existePorDocumento(String documento);
+
+    Optional<Usuario> buscarPorId(Long id);
 }

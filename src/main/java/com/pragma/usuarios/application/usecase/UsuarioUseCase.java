@@ -3,8 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.pragma.usuarios.application.usecase;
+
 import com.pragma.usuarios.domain.api.UsuarioServicePort;
 import com.pragma.usuarios.domain.exception.DomainException;
+import com.pragma.usuarios.domain.exception.UsuarioNoEncontradoException;
 import com.pragma.usuarios.domain.model.Rol;
 import com.pragma.usuarios.domain.model.Usuario;
 import com.pragma.usuarios.domain.spi.PasswordEncoderPort;
@@ -12,6 +14,7 @@ import com.pragma.usuarios.domain.spi.UsuarioPersistencePort;
 
 import java.time.LocalDate;
 import java.time.Period;
+
 /**
  *
  * @author Juan Camilo
@@ -27,7 +30,7 @@ public class UsuarioUseCase implements UsuarioServicePort {
     private final PasswordEncoderPort passwordEncoderPort;
 
     public UsuarioUseCase(UsuarioPersistencePort persistencePort,
-                          PasswordEncoderPort passwordEncoderPort) {
+            PasswordEncoderPort passwordEncoderPort) {
         this.persistencePort = persistencePort;
         this.passwordEncoderPort = passwordEncoderPort;
     }
@@ -53,14 +56,35 @@ public class UsuarioUseCase implements UsuarioServicePort {
         return persistencePort.guardar(usuario);
     }
 
+    @Override
+    public Rol obtenerRol(Long id) {
+        return persistencePort.buscarPorId(id)
+                .map(Usuario::getRol)
+                .orElseThrow(() -> new UsuarioNoEncontradoException("No existe un usuario con ese id"));
+    }
+
     private void validarCamposObligatorios(Usuario u) {
-        if (esVacio(u.getNombre())) throw new DomainException("El nombre es obligatorio");
-        if (esVacio(u.getApellido())) throw new DomainException("El apellido es obligatorio");
-        if (esVacio(u.getDocumento())) throw new DomainException("El documento es obligatorio");
-        if (esVacio(u.getCelular())) throw new DomainException("El celular es obligatorio");
-        if (u.getFechaNacimiento() == null) throw new DomainException("La fecha de nacimiento es obligatoria");
-        if (esVacio(u.getCorreo())) throw new DomainException("El correo es obligatorio");
-        if (esVacio(u.getClave())) throw new DomainException("La clave es obligatoria");
+        if (esVacio(u.getNombre())) {
+            throw new DomainException("El nombre es obligatorio");
+        }
+        if (esVacio(u.getApellido())) {
+            throw new DomainException("El apellido es obligatorio");
+        }
+        if (esVacio(u.getDocumento())) {
+            throw new DomainException("El documento es obligatorio");
+        }
+        if (esVacio(u.getCelular())) {
+            throw new DomainException("El celular es obligatorio");
+        }
+        if (u.getFechaNacimiento() == null) {
+            throw new DomainException("La fecha de nacimiento es obligatoria");
+        }
+        if (esVacio(u.getCorreo())) {
+            throw new DomainException("El correo es obligatorio");
+        }
+        if (esVacio(u.getClave())) {
+            throw new DomainException("La clave es obligatoria");
+        }
     }
 
     private void validarCorreo(String correo) {
