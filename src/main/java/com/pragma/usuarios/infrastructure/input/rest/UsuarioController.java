@@ -13,6 +13,7 @@ import com.pragma.usuarios.infrastructure.input.rest.dto.UsuarioResponseDto;
 import com.pragma.usuarios.infrastructure.input.rest.mapper.UsuarioDtoMapper;
 import com.pragma.usuarios.infrastructure.security.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +44,7 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Crear un propietario (solo el administrador)")
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/propietario")
     public ResponseEntity<UsuarioResponseDto> crearPropietario(@RequestBody UsuarioRequestDto request) {
         Usuario creado = servicePort.crearPropietario(mapper.toDomain(request));
