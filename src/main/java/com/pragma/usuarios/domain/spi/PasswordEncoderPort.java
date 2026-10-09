@@ -11,4 +11,6 @@ package com.pragma.usuarios.domain.spi;
 public interface PasswordEncoderPort {
 
     String encriptar(String claveSinCifrar);
+
+    boolean coinciden(String claveSinCifrar, String claveEncriptada);
 }

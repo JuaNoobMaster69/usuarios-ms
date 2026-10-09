@@ -14,6 +14,8 @@ import com.pragma.usuarios.domain.model.Usuario;
 public interface UsuarioServicePort {
 
     Usuario crearPropietario(Usuario usuario);
-    
-        Rol obtenerRol(Long id);
+
+    Rol obtenerRol(Long id);
+
+    Usuario login(String correo, String clave);
 }

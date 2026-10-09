@@ -4,6 +4,7 @@
  */
 package com.pragma.usuarios.infrastructure.output.jpa.repository;
 import com.pragma.usuarios.infrastructure.output.jpa.entity.UsuarioEntity;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 /**
  *
@@ -14,4 +15,6 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
     boolean existsByCorreo(String correo);
 
     boolean existsByDocumento(String documento);
+
+    Optional<UsuarioEntity> findByCorreo(String correo);
 }

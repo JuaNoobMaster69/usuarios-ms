@@ -63,6 +63,22 @@ public class UsuarioUseCase implements UsuarioServicePort {
                 .orElseThrow(() -> new UsuarioNoEncontradoException("No existe un usuario con ese id"));
     }
 
+    @Override
+    public Usuario login(String correo, String clave) {
+        if (esVacio(correo) || esVacio(clave)) {
+            throw new DomainException("El correo y la clave son obligatorios");
+        }
+
+        Usuario usuario = persistencePort.buscarPorCorreo(correo)
+                .orElseThrow(() -> new DomainException("Correo o clave incorrectos"));
+
+        if (!passwordEncoderPort.coinciden(clave, usuario.getClave())) {
+            throw new DomainException("Correo o clave incorrectos");
+        }
+
+        return usuario;
+    }
+
     private void validarCamposObligatorios(Usuario u) {
         if (esVacio(u.getNombre())) {
             throw new DomainException("El nombre es obligatorio");

@@ -41,8 +41,14 @@ public class UsuarioJpaAdapter implements UsuarioPersistencePort {
     public boolean existePorDocumento(String documento) {
         return repository.existsByDocumento(documento);
     }
+
     @Override
     public Optional<Usuario> buscarPorId(Long id) {
         return repository.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public Optional<Usuario> buscarPorCorreo(String correo) {
+        return repository.findByCorreo(correo).map(mapper::toDomain);
     }
 }

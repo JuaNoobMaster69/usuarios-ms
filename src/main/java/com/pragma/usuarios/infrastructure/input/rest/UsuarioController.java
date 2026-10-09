@@ -6,9 +6,12 @@ package com.pragma.usuarios.infrastructure.input.rest;
 
 import com.pragma.usuarios.domain.api.UsuarioServicePort;
 import com.pragma.usuarios.domain.model.Usuario;
+import com.pragma.usuarios.infrastructure.input.rest.dto.LoginRequestDto;
+import com.pragma.usuarios.infrastructure.input.rest.dto.LoginResponseDto;
 import com.pragma.usuarios.infrastructure.input.rest.dto.UsuarioRequestDto;
 import com.pragma.usuarios.infrastructure.input.rest.dto.UsuarioResponseDto;
 import com.pragma.usuarios.infrastructure.input.rest.mapper.UsuarioDtoMapper;
+import com.pragma.usuarios.infrastructure.security.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,10 +32,14 @@ public class UsuarioController {
 
     private final UsuarioServicePort servicePort;
     private final UsuarioDtoMapper mapper;
+    private final AuthService authService;
 
-    public UsuarioController(UsuarioServicePort servicePort, UsuarioDtoMapper mapper) {
+    public UsuarioController(UsuarioServicePort servicePort,
+                             UsuarioDtoMapper mapper,
+                             AuthService authService) {
         this.servicePort = servicePort;
         this.mapper = mapper;
+        this.authService = authService;
     }
 
     @Operation(summary = "Crear un propietario (solo el administrador)")
@@ -48,4 +55,10 @@ public class UsuarioController {
         return ResponseEntity.ok(servicePort.obtenerRol(id).name());
     }
 
+    @Operation(summary = "Iniciar sesión")
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request) {
+        String token = authService.login(request.correo(), request.clave());
+        return ResponseEntity.ok(new LoginResponseDto(token));
+    }
 }

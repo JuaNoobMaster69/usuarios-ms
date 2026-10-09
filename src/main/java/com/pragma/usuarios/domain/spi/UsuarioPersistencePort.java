@@ -21,4 +21,6 @@ public interface UsuarioPersistencePort {
     boolean existePorDocumento(String documento);
 
     Optional<Usuario> buscarPorId(Long id);
+
+    Optional<Usuario> buscarPorCorreo(String correo);
 }
