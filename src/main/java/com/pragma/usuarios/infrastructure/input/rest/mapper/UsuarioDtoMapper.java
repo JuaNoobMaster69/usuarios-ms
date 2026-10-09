@@ -5,6 +5,7 @@
 package com.pragma.usuarios.infrastructure.input.rest.mapper;
 
 import com.pragma.usuarios.domain.model.Usuario;
+import com.pragma.usuarios.infrastructure.input.rest.dto.EmpleadoRequestDto;
 import com.pragma.usuarios.infrastructure.input.rest.dto.UsuarioRequestDto;
 import com.pragma.usuarios.infrastructure.input.rest.dto.UsuarioResponseDto;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,18 @@ public class UsuarioDtoMapper {
         usuario.setFechaNacimiento(dto.getFechaNacimiento());
         usuario.setCorreo(dto.getCorreo());
         usuario.setClave(dto.getClave());
+        return usuario;
+    }
+
+    public Usuario toDomain(EmpleadoRequestDto dto) {
+        Usuario usuario = new Usuario();
+        usuario.setNombre(dto.nombre());
+        usuario.setApellido(dto.apellido());
+        usuario.setDocumento(dto.documento());
+        usuario.setCelular(dto.celular());
+        usuario.setFechaNacimiento(dto.fechaNacimiento());
+        usuario.setCorreo(dto.correo());
+        usuario.setClave(dto.clave());
         return usuario;
     }
 

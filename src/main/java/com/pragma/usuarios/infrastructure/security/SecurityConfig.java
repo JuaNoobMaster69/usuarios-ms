@@ -43,6 +43,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/usuarios/login").permitAll()
                 // Crear propietario: solo ADMINISTRADOR
                 .requestMatchers(HttpMethod.POST, "/api/usuarios/propietario").hasRole("ADMINISTRADOR")
+                // Crear empleado: solo PROPIETARIO
+                .requestMatchers(HttpMethod.POST, "/api/usuarios/empleado").hasRole("PROPIETARIO")
                 // Consultar rol: público temporalmente (lo usa plazoleta-ms)
                 .requestMatchers(HttpMethod.GET, "/api/usuarios/*/rol").permitAll()
                 // Todo lo demás: autenticado

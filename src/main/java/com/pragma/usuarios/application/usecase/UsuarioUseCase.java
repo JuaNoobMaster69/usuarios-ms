@@ -57,6 +57,27 @@ public class UsuarioUseCase implements UsuarioServicePort {
     }
 
     @Override
+    public Usuario crearEmpleado(Usuario usuario) {
+        validarCamposObligatorios(usuario);
+        validarCorreo(usuario.getCorreo());
+        validarCelular(usuario.getCelular());
+        validarDocumento(usuario.getDocumento());
+        validarMayorDeEdad(usuario.getFechaNacimiento());
+
+        if (persistencePort.existePorCorreo(usuario.getCorreo())) {
+            throw new DomainException("Ya existe un usuario con ese correo");
+        }
+        if (persistencePort.existePorDocumento(usuario.getDocumento())) {
+            throw new DomainException("Ya existe un usuario con ese documento");
+        }
+
+        usuario.setRol(Rol.EMPLEADO);
+        usuario.setClave(passwordEncoderPort.encriptar(usuario.getClave()));
+
+        return persistencePort.guardar(usuario);
+    }
+
+    @Override
     public Rol obtenerRol(Long id) {
         return persistencePort.buscarPorId(id)
                 .map(Usuario::getRol)

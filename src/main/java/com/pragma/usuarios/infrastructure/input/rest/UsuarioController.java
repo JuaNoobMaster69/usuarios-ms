@@ -6,6 +6,7 @@ package com.pragma.usuarios.infrastructure.input.rest;
 
 import com.pragma.usuarios.domain.api.UsuarioServicePort;
 import com.pragma.usuarios.domain.model.Usuario;
+import com.pragma.usuarios.infrastructure.input.rest.dto.EmpleadoRequestDto;
 import com.pragma.usuarios.infrastructure.input.rest.dto.LoginRequestDto;
 import com.pragma.usuarios.infrastructure.input.rest.dto.LoginResponseDto;
 import com.pragma.usuarios.infrastructure.input.rest.dto.UsuarioRequestDto;
@@ -48,6 +49,14 @@ public class UsuarioController {
     @PostMapping("/propietario")
     public ResponseEntity<UsuarioResponseDto> crearPropietario(@RequestBody UsuarioRequestDto request) {
         Usuario creado = servicePort.crearPropietario(mapper.toDomain(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(creado));
+    }
+
+    @Operation(summary = "Crear un empleado (solo el propietario)")
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping("/empleado")
+    public ResponseEntity<UsuarioResponseDto> crearEmpleado(@RequestBody EmpleadoRequestDto request) {
+        Usuario creado = servicePort.crearEmpleado(mapper.toDomain(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(creado));
     }
 
