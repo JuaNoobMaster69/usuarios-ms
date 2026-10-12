@@ -5,6 +5,7 @@
 package com.pragma.usuarios.infrastructure.input.rest.mapper;
 
 import com.pragma.usuarios.domain.model.Usuario;
+import com.pragma.usuarios.infrastructure.input.rest.dto.ClienteRequestDto;
 import com.pragma.usuarios.infrastructure.input.rest.dto.EmpleadoRequestDto;
 import com.pragma.usuarios.infrastructure.input.rest.dto.UsuarioRequestDto;
 import com.pragma.usuarios.infrastructure.input.rest.dto.UsuarioResponseDto;
@@ -30,6 +31,18 @@ public class UsuarioDtoMapper {
     }
 
     public Usuario toDomain(EmpleadoRequestDto dto) {
+        Usuario usuario = new Usuario();
+        usuario.setNombre(dto.nombre());
+        usuario.setApellido(dto.apellido());
+        usuario.setDocumento(dto.documento());
+        usuario.setCelular(dto.celular());
+        usuario.setFechaNacimiento(dto.fechaNacimiento());
+        usuario.setCorreo(dto.correo());
+        usuario.setClave(dto.clave());
+        return usuario;
+    }
+
+    public Usuario toDomain(ClienteRequestDto dto) {
         Usuario usuario = new Usuario();
         usuario.setNombre(dto.nombre());
         usuario.setApellido(dto.apellido());

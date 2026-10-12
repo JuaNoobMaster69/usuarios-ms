@@ -41,6 +41,8 @@ public class SecurityConfig {
                 ).permitAll()
                 // Login abierto
                 .requestMatchers(HttpMethod.POST, "/api/usuarios/login").permitAll()
+                // Crear cliente: público (el cliente se registra solo)
+                .requestMatchers(HttpMethod.POST, "/api/usuarios/cliente").permitAll()
                 // Crear propietario: solo ADMINISTRADOR
                 .requestMatchers(HttpMethod.POST, "/api/usuarios/propietario").hasRole("ADMINISTRADOR")
                 // Crear empleado: solo PROPIETARIO

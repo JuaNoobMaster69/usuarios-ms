@@ -17,6 +17,8 @@ public interface UsuarioServicePort {
 
     Usuario crearEmpleado(Usuario usuario);
 
+    Usuario crearCliente(Usuario usuario);
+
     Rol obtenerRol(Long id);
 
     Usuario login(String correo, String clave);
