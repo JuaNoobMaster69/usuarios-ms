@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.pragma.usuarios.application.usecase;
+
 import com.pragma.usuarios.domain.exception.DomainException;
 import com.pragma.usuarios.domain.model.Rol;
 import com.pragma.usuarios.domain.model.Usuario;
@@ -16,10 +17,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+
 /**
  *
  * @author Juan Camilo
@@ -49,6 +52,10 @@ class UsuarioUseCaseTest {
         usuario.setCorreo("juan@correo.com");
         usuario.setClave("secreta123");
     }
+
+    // =========================================================
+    // HU1: crearPropietario
+    // =========================================================
 
     @Test
     void crearPropietario_conDatosValidos_guardaConRolPropietarioYClaveCifrada() {
@@ -149,5 +156,152 @@ class UsuarioUseCaseTest {
                 () -> useCase.crearPropietario(usuario));
 
         assertEquals("Ya existe un usuario con ese documento", ex.getMessage());
+    }
+
+    // =========================================================
+    // HU6: crearEmpleado
+    // =========================================================
+
+    @Test
+    void crearEmpleado_conDatosValidos_guardaConRolEmpleadoYClaveCifrada() {
+        when(persistencePort.existePorCorreo("juan@correo.com")).thenReturn(false);
+        when(persistencePort.existePorDocumento("123456789")).thenReturn(false);
+        when(passwordEncoderPort.encriptar("secreta123")).thenReturn("hash-bcrypt");
+        when(persistencePort.guardar(any(Usuario.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Usuario resultado = useCase.crearEmpleado(usuario);
+
+        assertEquals(Rol.EMPLEADO, resultado.getRol());
+        assertEquals("hash-bcrypt", resultado.getClave());
+        verify(persistencePort).guardar(usuario);
+    }
+
+    @Test
+    void crearEmpleado_conCorreoExistente_lanzaExcepcion() {
+        when(persistencePort.existePorCorreo("juan@correo.com")).thenReturn(true);
+
+        DomainException ex = assertThrows(DomainException.class,
+                () -> useCase.crearEmpleado(usuario));
+
+        assertEquals("Ya existe un usuario con ese correo", ex.getMessage());
+        verify(persistencePort, never()).guardar(any());
+    }
+
+    @Test
+    void crearEmpleado_conDocumentoExistente_lanzaExcepcion() {
+        when(persistencePort.existePorCorreo("juan@correo.com")).thenReturn(false);
+        when(persistencePort.existePorDocumento("123456789")).thenReturn(true);
+
+        DomainException ex = assertThrows(DomainException.class,
+                () -> useCase.crearEmpleado(usuario));
+
+        assertEquals("Ya existe un usuario con ese documento", ex.getMessage());
+    }
+
+    @Test
+    void crearEmpleado_sinNombre_lanzaExcepcion() {
+        usuario.setNombre("");
+
+        DomainException ex = assertThrows(DomainException.class,
+                () -> useCase.crearEmpleado(usuario));
+
+        assertEquals("El nombre es obligatorio", ex.getMessage());
+    }
+
+    // =========================================================
+    // HU8: crearCliente
+    // =========================================================
+
+    @Test
+    void crearCliente_conDatosValidos_guardaConRolClienteYClaveCifrada() {
+        when(persistencePort.existePorCorreo("juan@correo.com")).thenReturn(false);
+        when(persistencePort.existePorDocumento("123456789")).thenReturn(false);
+        when(passwordEncoderPort.encriptar("secreta123")).thenReturn("hash-bcrypt");
+        when(persistencePort.guardar(any(Usuario.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Usuario resultado = useCase.crearCliente(usuario);
+
+        assertEquals(Rol.CLIENTE, resultado.getRol());
+        assertEquals("hash-bcrypt", resultado.getClave());
+        verify(persistencePort).guardar(usuario);
+    }
+
+    @Test
+    void crearCliente_conCorreoExistente_lanzaExcepcion() {
+        when(persistencePort.existePorCorreo("juan@correo.com")).thenReturn(true);
+
+        DomainException ex = assertThrows(DomainException.class,
+                () -> useCase.crearCliente(usuario));
+
+        assertEquals("Ya existe un usuario con ese correo", ex.getMessage());
+        verify(persistencePort, never()).guardar(any());
+    }
+
+    @Test
+    void crearCliente_conDocumentoExistente_lanzaExcepcion() {
+        when(persistencePort.existePorCorreo("juan@correo.com")).thenReturn(false);
+        when(persistencePort.existePorDocumento("123456789")).thenReturn(true);
+
+        DomainException ex = assertThrows(DomainException.class,
+                () -> useCase.crearCliente(usuario));
+
+        assertEquals("Ya existe un usuario con ese documento", ex.getMessage());
+    }
+
+    @Test
+    void crearCliente_siendoMenorDeEdad_lanzaExcepcion() {
+        usuario.setFechaNacimiento(LocalDate.now().minusYears(15));
+
+        DomainException ex = assertThrows(DomainException.class,
+                () -> useCase.crearCliente(usuario));
+
+        assertEquals("El usuario debe ser mayor de edad", ex.getMessage());
+    }
+
+    // =========================================================
+    // HU5: login
+    // =========================================================
+
+    @Test
+    void login_conCredencialesValidas_devuelveUsuario() {
+        usuario.setRol(Rol.CLIENTE);
+        usuario.setClave("hash-bcrypt");
+        when(persistencePort.buscarPorCorreo("juan@correo.com")).thenReturn(Optional.of(usuario));
+        when(passwordEncoderPort.coinciden("secreta123", "hash-bcrypt")).thenReturn(true);
+
+        Usuario resultado = useCase.login("juan@correo.com", "secreta123");
+
+        assertEquals("juan@correo.com", resultado.getCorreo());
+        assertEquals(Rol.CLIENTE, resultado.getRol());
+    }
+
+    @Test
+    void login_conCorreoInexistente_lanzaExcepcion() {
+        when(persistencePort.buscarPorCorreo("noexiste@correo.com")).thenReturn(Optional.empty());
+
+        DomainException ex = assertThrows(DomainException.class,
+                () -> useCase.login("noexiste@correo.com", "clave"));
+
+        assertEquals("Correo o clave incorrectos", ex.getMessage());
+    }
+
+    @Test
+    void login_conClaveIncorrecta_lanzaExcepcion() {
+        usuario.setClave("hash-bcrypt");
+        when(persistencePort.buscarPorCorreo("juan@correo.com")).thenReturn(Optional.of(usuario));
+        when(passwordEncoderPort.coinciden("claveMala", "hash-bcrypt")).thenReturn(false);
+
+        DomainException ex = assertThrows(DomainException.class,
+                () -> useCase.login("juan@correo.com", "claveMala"));
+
+        assertEquals("Correo o clave incorrectos", ex.getMessage());
+    }
+
+    @Test
+    void login_conCamposVacios_lanzaExcepcion() {
+        DomainException ex = assertThrows(DomainException.class,
+                () -> useCase.login("", ""));
+
+        assertEquals("El correo y la clave son obligatorios", ex.getMessage());
     }
 }
